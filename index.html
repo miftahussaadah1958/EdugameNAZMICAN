@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDUPLAY NAZMICAN</title>
+    <style>
+        /* ===========================
+           CSS & TEMA PREMIUM ANAK SD
+        =========================== */
+        :root {
+            --bg-color: #E0F2FE;
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --secondary: #0EA5E9;
+            --math-color: #EC4899;
+            --eng-color: #F59E0B;
+            --log-color: #14B8A6;
+            --text-dark: #1E293B;
+            --text-light: #64748B;
+            --bg-card: #FFFFFF;
+            --radius: 16px;
+            --color-success: #10B981;
+            --color-danger: #EF4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #app {
+            background-color: transparent;
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .view {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+        .view.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Typography */
+        h1, h2, h3 { margin-top: 0; }
+        .text-center { text-align: center; }
+        
+        /* Cards & Containers */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 20px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .btn-primary { background-color: var(--primary); color: white; box-shadow: 0 4px 0px 0px #3730A3; }
+        .btn-primary:active { transform: translateY(4px); box-shadow: none; }
+        
+        .btn-outline { background-color: transparent; border: 2px solid var(--primary); color: var(--primary); margin-top: 10px; }
+        .btn-small { padding: 8px 12px; font-size: 0.8rem; width: auto; display: inline-block; box-shadow: 0 2px 0px 0px #3730A3; }
+
+        /* Forms */
+        .form-group { margin-bottom: 16px; text-align: left; }
+        .form-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: var(--text-light); }
+        .form-group input { width: 100%; padding: 12px; border: 2px solid #E2E8F0; border-radius: 10px; font-size: 1rem; outline: none; transition: border 0.2s; }
+        .form-group input:focus { border-color: var(--primary); }
+
+        /* Game Cards (Dashboard) */
+        .game-card {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 16px;
+            border-radius: var(--radius);
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 2px solid transparent;
+        }
+        .game-card:hover { transform: scale(1.02); }
+        .game-card .icon {
+            width: 50px; height: 50px; border-radius: 12px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.5rem; color: white; margin-right: 16px;
+        }
+        .game-card.math .icon { background-color: var(--math-color); }
+        .game-card.math:hover { border-color: var(--math-color); }
+        .game-card.english .icon { background-color: var(--eng-color); }
+        .game-card.english:hover { border-color: var(--eng-color); }
+        .game-card.logic .icon { background-color: var(--log-color); }
+        .game-card.logic:hover { border-color: var(--log-color); }
+
+        /* Header Game */
+        .game-header {
+            display: flex; justify-content: space-between; align-items: center;
+            background: white; padding: 16px; border-radius: var(--radius);
+            margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .timer { font-size: 1.2rem; font-weight: 700; color: var(--color-danger); }
+        
+        /* Pertanyaan */
+        .question-box {
+            background: white; padding: 30px 20px; border-radius: var(--radius);
+            text-align: center; font-size: 1.8rem; font-weight: 800; margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); min-height: 120px; display: flex; align-items: center; justify-content: center;
+        }
+
+        /* Opsi Jawaban */
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .option-btn {
+            background: white; border: 2px solid #E2E8F0; border-radius: 12px;
+            padding: 20px; font-size: 1.2rem; font-weight: 700; color: var(--text-dark);
+            cursor: pointer; transition: all 0.1s; box-shadow: 0 4px 0px 0px #CBD5E1;
+        }
+        .option-btn:active { transform: translateY(4px); box-shadow: none; }
+        .option-btn.correct { background-color: var(--color-success); border-color: var(--color-success); color: white; box-shadow: 0 4px 0px 0px #047857; }
+        .option-btn.wrong { background-color: var(--color-danger); border-color: var(--color-danger); color: white; box-shadow: 0 4px 0px 0px #991B1B; }
+
+        /* Table History */
+        .history-table-container {
+            margin-top: 30px; background: white; border-radius: var(--radius); border: 2px solid #E2E8F0; overflow: hidden;
+        }
+        .history-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: center; }
+        .history-table th, .history-table td { padding: 12px 10px; border-bottom: 1px solid #E2E8F0; }
+        .history-table th { background-color: #F8FAFC; color: var(--text-light); font-weight: 800; }
+        .history-table tr:last-child td { border-bottom: none; }
+
+        /* Overlays & Utilities */
+        #loading-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.9); display: none;
+            justify-content: center; align-items: center; z-index: 1000; flex-direction: column;
+        }
+        .spinner { width: 50px; height: 50px; border: 5px solid #E2E8F0; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .demo-panel { background: #FEF3C7; color: #92400E; padding: 12px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 20px; border: 1px dashed #F59E0B; text-align: center; }
+        .back-menu-btn { background: #f1f5f9; color: #475569; padding: 8px 12px; border-radius: 8px; text-decoration: none; font-size: 0.9rem; border: none; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
+        .back-menu-btn:hover { background: #e2e8f0; }
+
+        .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 10px 0 20px 0; }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <!-- LOADING OVERLAY -->
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <h3 style="margin-top: 20px; color: var(--primary);">Memuat...</h3>
+    </div>
+
+    <!-- LOGIN VIEW -->
+    <div id="login-view" class="view active">
+        <div class="card" style="margin-top: 50px; text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 10px;">🎓</div>
+            <h1 style="color: var(--primary); margin-bottom: 5px;">EDUPLAY NAZMICAN</h1>
+            <p class="text-light" style="margin-bottom: 24px;">Belajar jadi menyenangkan!</p>
+
+            <div id="demo-ui-container"></div> <!-- Panel Demo Otomatis -->
+
+            <form id="login-form" onsubmit="event.preventDefault(); handleLogin();">
+                <div class="form-group">
+                    <label>Username (NIS)</label>
+                    <input type="text" id="username" placeholder="Masukkan username" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="Masukkan password" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Mulai Belajar 🚀</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboard-view" class="view">
+        <div class="top-nav">
+            <div>
+                <h2 style="margin:0; color: var(--primary);">Hai, <span id="user-name">Siswa</span>! 👋</h2>
+                <p class="text-light" style="margin:0; font-size: 0.9rem;">Pilih permainan hari ini</p>
+            </div>
+            <button class="btn-outline btn-small" onclick="handleLogout()">Keluar</button>
+        </div>
+
+        <div class="game-card math" onclick="showLevelSelector('math')">
+            <div class="icon">🔢</div>
+            <div>
+                <h3>Arena Berhitung</h3>
+                <p class="text-light" style="font-size: 0.9rem;">Tambah, Kurang, Kali, Bagi</p>
+            </div>
+        </div>
+
+        <div class="game-card english" onclick="showLevelSelector('english')">
+            <div class="icon">🔤</div>
+            <div>
+                <h3>English Fun</h3>
+                <p class="text-light" style="font-size: 0.9rem;">Kosakata Bahasa Inggris</p>
+            </div>
+        </div>
+
+        <div class="game-card logic" onclick="showLevelSelector('logic')">
+            <div class="icon">🧩</div>
+            <div>
+                <h3>Asah Otak</h3>
+                <p class="text-light" style="font-size: 0.9rem;">Psikotes & Pola</p>
+            </div>
+        </div>
+
+        <!-- TABEL RIWAYAT SKOR -->
+        <div class="history-table-container">
+            <h3 style="padding: 15px; border-bottom: 1px solid #E2E8F0; margin:0; text-align: left;">Riwayat Skor (Sesi Ini)</h3>
+            <div style="overflow-x: auto;">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama</th>
+                            <th>Level</th>
+                            <th>Bintang/Skor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-tbody">
+                        <tr><td colspan="4" class="text-light" style="padding: 20px;">Belum ada permainan diselesaikan</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- LEVEL SELECTOR VIEW -->
+    <div id="level-view" class="view">
+        <button class="back-menu-btn" onclick="showView('dashboard-view')" style="margin-bottom: 20px;">⬅ Kembali</button>
+        <h2 class="text-center" id="level-title" style="margin-bottom: 20px;">Pilih Level</h2>
+        
+        <div style="display: grid; gap: 12px;">
+            <button id="btn-lvl-1" class="btn btn-outline" onclick="startGame(1)">Level 1 (Sangat Mudah)</button>
+            <button id="btn-lvl-2" class="btn btn-outline" onclick="startGame(2)">Level 2 (Mudah)</button>
+            <button id="btn-lvl-3" class="btn btn-outline" onclick="startGame(3)">Level 3 (Sangat Sedang)</button>
+            <button id="btn-lvl-4" class="btn btn-outline" onclick="startGame(4)">Level 4 (Sedang)</button>
+            <button id="btn-lvl-5" class="btn btn-outline" onclick="startGame(5)">Level 5 (Susah)</button>
+            <button id="btn-lvl-6" class="btn btn-outline" onclick="startGame(6)">Level 6 (Sangat Susah)</button>
+        </div>
+    </div>
+
+    <!-- GAMEPLAY VIEW -->
+    <div id="game-view" class="view">
+        <div class="game-header">
+            <div>
+                <button class="back-menu-btn" onclick="confirmExitGame()">⬅ Menu Utama</button>
+                <div class="text-light" style="font-size: 0.9rem; margin-top: 8px;">Soal: <span id="q-counter">1/20</span></div>
+            </div>
+            <div class="timer" style="display: none;">⏳ <span id="timer-display">15</span>s</div>
+        </div>
+
+        <div class="question-box" id="question-text">
+            Siap?
+        </div>
+
+        <div class="options-grid" id="options-container">
+            <!-- Options akan digenerate dari JS -->
+        </div>
+    </div>
+
+    <!-- RESULT VIEW -->
+    <div id="result-view" class="view text-center">
+        <div class="card" style="margin-top: 50px;">
+            <h2 style="color: var(--primary);">Permainan Selesai!</h2>
+            <div style="font-size: 5rem; margin: 20px 0;" id="result-stars">⭐⭐⭐</div>
+            <h3>Skor Kamu: <span id="result-score">100</span></h3>
+            
+            <button class="btn btn-primary" onclick="showView('dashboard-view')" style="margin-top: 30px;">Kembali ke Menu</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    /* ===========================
+       KONFIGURASI PRODUCTION
+    =========================== */
+    const IS_PREVIEW = false; // Set false saat deploy ke Blogger
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwdEEgyE4ieWKBlLFa5Zqtm55o7wGWBXEwVdG6ehVO6Y8oIN4zLzS29_OdeitRKlIxM/exec"; 
+
+    const APP_CONFIG = { IS_PREVIEW, GAS_URL, VERSION: "1.0.1" };
+
+    function isGasUrlValid() { return /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec(\?.*)?$/.test(APP_CONFIG.GAS_URL || ""); }
+    function isGasUrlPlaceholder() { return !APP_CONFIG.GAS_URL || APP_CONFIG.GAS_URL.includes("TEMPEL_URL") || APP_CONFIG.GAS_URL.trim() === ""; }
+    
+    // Deteksi dilonggarkan agar Demo Panel PASTI MUNCUL di Canvas
+    function isBloggerRuntime() { const h = window.location.hostname || ""; return h.includes("blogspot.") || h.includes("blogger."); }
+
+    const APP_MODE = {
+        isPreview: APP_CONFIG.IS_PREVIEW === true && isGasUrlPlaceholder(),
+        isProduction: APP_CONFIG.IS_PREVIEW === false || isGasUrlValid() || isBloggerRuntime()
+    };
+    const SHOW_DEMO_UI = APP_MODE.isPreview && !APP_MODE.isProduction;
+
+    /* ===========================
+       STATE & DATABASE MOCKUP
+    =========================== */
+    let currentUser = null;
+    let userHistory = [];
+    let unlockedLevels = JSON.parse(sessionStorage.getItem('unlockedLevels')) || { math: 1, english: 1, logic: 1 };
+    
+    // Konfigurasi Game Saat Ini
+    let currentGame = {
+        type: '', level: 1, score: 0, currentQ: 0, maxQ: 20, // 20 Soal
+        timer: 15, interval: null, correctAnswer: null, isAnswering: false, pool: []
+    };
+
+    // Bank Soal Bahasa Inggris (20+ Soal)
+    const englishDB = [
+        { q: "Gambar: 🍎 (Apel)", a: "Apple", w: ["Banana", "Grape", "Orange"] },
+        { q: "Gambar: 🍌 (Pisang)", a: "Banana", w: ["Apple", "Mango", "Lemon"] },
+        { q: "Kucing", a: "Cat", w: ["Dog", "Cow", "Bird"] },
+        { q: "Anjing", a: "Dog", w: ["Cat", "Fish", "Pig"] },
+        { q: "Merah", a: "Red", w: ["Blue", "Green", "Yellow"] },
+        { q: "Biru", a: "Blue", w: ["Red", "Black", "White"] },
+        { q: "Satu", a: "One", w: ["Two", "Three", "Four"] },
+        { q: "Buku", a: "Book", w: ["Pen", "Pencil", "Bag"] },
+        { q: "Matahari", a: "Sun", w: ["Moon", "Star", "Cloud"] },
+        { q: "Gajah", a: "Elephant", w: ["Tiger", "Lion", "Bear"] },
+        { q: "Ikan", a: "Fish", w: ["Bird", "Snake", "Frog"] },
+        { q: "Sepatu", a: "Shoes", w: ["Hat", "Shirt", "Pants"] },
+        { q: "Sekolah", a: "School", w: ["House", "Hospital", "Market"] },
+        { q: "Mobil", a: "Car", w: ["Bike", "Bus", "Train"] },
+        { q: "B_N_N_ (Pisang)", a: "A, A, A", w: ["E, E, E", "O, O, O", "I, I, I"] },
+        { q: "Telinga", a: "Ear", w: ["Eye", "Nose", "Mouth"] },
+        { q: "Tangan", a: "Hand", w: ["Foot", "Head", "Leg"] },
+        { q: "Bunga", a: "Flower", w: ["Tree", "Leaf", "Grass"] },
+        { q: "Susu", a: "Milk", w: ["Water", "Juice", "Tea"] },
+        { q: "Bintang", a: "Star", w: ["Moon", "Sun", "Sky"] }
+    ];
+
+    // Bank Soal Logika/Psikotes (20+ Soal)
+    const logicDB = [
+        { q: "2, 4, 6, ...?", a: "8", w: ["7", "9", "10"] },
+        { q: "1, 3, 5, ...?", a: "7", w: ["6", "8", "9"] },
+        { q: "Merah, Kuning, Hijau, Merah, Kuning, ...?", a: "Hijau", w: ["Merah", "Kuning", "Biru"] },
+        { q: "10, 20, 30, ...?", a: "40", w: ["35", "50", "60"] },
+        { q: "⬜, ⬛, ⬜, ⬛, ...?", a: "⬜", w: ["⬛", "⚪", "⚫"] },
+        { q: "A, B, C, ...?", a: "D", w: ["E", "F", "G"] },
+        { q: "Pagi, Siang, Sore, ...?", a: "Malam", w: ["Subuh", "Tengah Hari", "Besok"] },
+        { q: "Senin, Selasa, Rabu, ...?", a: "Kamis", w: ["Jumat", "Sabtu", "Minggu"] },
+        { q: "Mata untuk melihat, Telinga untuk...?", a: "Mendengar", w: ["Mencium", "Merasa", "Meraba"] },
+        { q: "Es dingin, Api...?", a: "Panas", w: ["Terang", "Kecil", "Asap"] },
+        { q: "Kucing : Mengeong, Anjing : ...?", a: "Menggonggong", w: ["Mengaum", "Menciut", "Mendesis"] },
+        { q: "100, 90, 80, ...?", a: "70", w: ["60", "75", "85"] },
+        { q: "🔺, 🔻, 🔺, 🔻, ...?", a: "🔺", w: ["🔻", "🔹", "🔸"] },
+        { q: "11, 22, 33, ...?", a: "44", w: ["55", "34", "45"] },
+        { q: "Yang tidak termasuk alat tulis?", a: "Panci", w: ["Pensil", "Buku", "Penghapus"] },
+        { q: "Yang tidak termasuk hewan laut?", a: "Kucing", w: ["Ikan", "Hiu", "Paus"] },
+        { q: "Besar lawan kata dari...?", a: "Kecil", w: ["Panjang", "Pendek", "Tinggi"] },
+        { q: "Cepat lawan kata dari...?", a: "Lambat", w: ["Diam", "Lari", "Jalan"] },
+        { q: "2, 5, 8, ...? (+3)", a: "11", w: ["10", "12", "9"] },
+        { q: "Z, Y, X, ...?", a: "W", w: ["V", "U", "T"] }
+    ];
+
+    // Utility Acak Array
+    function shuffle(array) {
+        let currentIndex = array.length, randomIndex;
+        while (currentIndex !== 0) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+            [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+        }
+        return array;
+    }
+
+    // Angka Random
+    function rand(min, max) { return Math.floor(Math.random() * (max - min + 1) + min); }
+
+    function showView(id) {
+        document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function showLoading(show) {
+        document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
+    }
+
+    function renderDemoUI() {
+        if (!SHOW_DEMO_UI) return;
+        const container = document.getElementById('demo-ui-container');
+        if(container) {
+            container.innerHTML = `
+                <div class="demo-panel">
+                    <strong>Mode Preview Aktif</strong><br>
+                    Untuk pengujian, gunakan:<br>
+                    Username: <b>siswa</b> | Password: <b>siswa123</b><br>
+                    Username: <b>dummy</b> | Password: <b>dummy123</b><br>
+                    <div style="margin-top:10px; display:flex; justify-content:center; gap:10px;">
+                        <button class="btn btn-outline btn-small" onclick="document.getElementById('username').value='siswa'; document.getElementById('password').value='siswa123';" style="background:white; margin-top:0;">Isi Otomatis (Siswa)</button>
+                        <button class="btn btn-outline btn-small" onclick="document.getElementById('username').value='dummy'; document.getElementById('password').value='dummy123';" style="background:white; margin-top:0;">Isi Otomatis (Dummy)</button>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        renderDemoUI();
+        if (sessionStorage.getItem('userSession')) {
+            currentUser = JSON.parse(sessionStorage.getItem('userSession'));
+            document.getElementById('user-name').textContent = currentUser.nama;
+            showView('dashboard-view');
+            renderHistoryTable();
+        }
+    });
+
+    async function handleLogin() {
+        showLoading(true);
+        const user = document.getElementById('username').value;
+        const pass = document.getElementById('password').value;
+        
+        let res = await fetchAPI('login', { username: user, password: pass });
+        showLoading(false);
+        
+        if (res.success) {
+            currentUser = res.data;
+            sessionStorage.setItem('userSession', JSON.stringify(currentUser));
+            document.getElementById('user-name').textContent = currentUser.nama;
+            showView('dashboard-view');
+            renderHistoryTable();
+        } else {
+            alert(res.message);
+        }
+    }
+
+    function handleLogout() {
+        currentUser = null;
+        sessionStorage.removeItem('userSession');
+        sessionStorage.removeItem('unlockedLevels');
+        unlockedLevels = { math: 1, english: 1, logic: 1 };
+        userHistory = []; // Reset tabel
+        renderHistoryTable();
+        showView('login-view');
+        document.getElementById('login-form').reset();
+    }
+
+    function showLevelSelector(type) {
+        currentGame.type = type;
+        const titles = { 'math': 'Arena Berhitung', 'english': 'English Fun', 'logic': 'Asah Otak' };
+        document.getElementById('level-title').textContent = titles[type];
+        
+        for(let i=1; i<=6; i++) {
+            let btn = document.getElementById('btn-lvl-' + i);
+            if(i <= unlockedLevels[type]) {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+                btn.innerHTML = btn.innerHTML.replace(' 🔒', '');
+            } else {
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+                if(!btn.innerHTML.includes('🔒')) btn.innerHTML += ' 🔒';
+            }
+        }
+        
+        showView('level-view');
+    }
+
+    function confirmExitGame() {
+        if(confirm("Yakin ingin kembali ke Menu Utama? Permainan ini tidak akan disimpan.")) {
+            clearInterval(currentGame.interval);
+            showView('dashboard-view');
+        }
+    }
+
+    function startGame(level) {
+        currentGame.level = level;
+        currentGame.score = 0;
+        currentGame.currentQ = 0;
+        currentGame.maxQ = 20; // Tetap 20 soal
+        
+        // Siapkan pool soal yang diacak untuk english dan logic
+        if (currentGame.type === 'english') {
+            currentGame.pool = shuffle([...englishDB]);
+        } else if (currentGame.type === 'logic') {
+            currentGame.pool = shuffle([...logicDB]);
+        }
+
+        showView('game-view');
+        nextQuestion();
+    }
+
+    function nextQuestion() {
+        currentGame.currentQ++;
+        if (currentGame.currentQ > currentGame.maxQ) {
+            finishGame();
+            return;
+        }
+
+        currentGame.isAnswering = false;
+        document.getElementById('q-counter').textContent = `${currentGame.currentQ}/${currentGame.maxQ}`;
+        
+        // Atur waktu berdasarkan level
+        currentGame.timer = Math.max(20 - (currentGame.level * 2), 5); 
+        document.getElementById('timer-display').textContent = currentGame.timer;
+
+        let qData;
+        if (currentGame.type === 'math') qData = generateMath(currentGame.level);
+        if (currentGame.type === 'english') qData = generateEnglish(currentGame.level);
+        if (currentGame.type === 'logic') qData = generateLogic(currentGame.level);
+
+        document.getElementById('question-text').textContent = qData.question;
+        currentGame.correctAnswer = qData.answer;
+
+        const optsContainer = document.getElementById('options-container');
+        optsContainer.innerHTML = '';
+        
+        qData.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.textContent = opt;
+            btn.onclick = () => handleAnswer(btn, opt);
+            optsContainer.appendChild(btn);
+        });
+
+        startTimer();
+    }
+
+    function generateMath(level) {
+        let a, b, op, ans;
+        if (level === 1) { a = rand(1, 10); b = rand(1, 10); op = '+'; ans = a + b; }
+        else if (level === 2) { a = rand(10, 50); b = rand(1, 20); op = '+'; ans = a + b; }
+        else if (level === 3) { a = rand(20, 50); b = rand(10, 30); op = rand(1,2)===1?'+':'-'; ans = op==='+'?a+b:a-b; }
+        else if (level === 4) { a = rand(2, 9); b = rand(2, 9); op = 'x'; ans = a * b; }
+        else if (level === 5) { a = rand(10, 99); b = rand(2, 9); op = 'x'; ans = a * b; }
+        else { a = rand(20, 100); b = rand(2, 10); op = '÷'; while(a%b!==0) {a=rand(20,100); b=rand(2,10);} ans = a / b; }
+
+        let wrongOpts = new Set();
+        while(wrongOpts.size < 3) {
+            let fake = ans + rand(-10, 10);
+            if(fake !== ans && fake >= 0) wrongOpts.add(fake);
+        }
+        return { question: `${a} ${op} ${b} = ?`, answer: ans.toString(), options: shuffle([ans.toString(), ...wrongOpts]) };
+    }
+
+    function generateEnglish(level) {
+        // Ambil soal dari pool yang sudah diacak (Mencegah berulang)
+        let item = currentGame.pool.length > 0 ? currentGame.pool.pop() : englishDB[rand(0, englishDB.length - 1)];
+        return { question: item.q, answer: item.a, options: shuffle(item.w.concat(item.a).slice(0,4)) };
+    }
+
+    function generateLogic(level) {
+        // Ambil soal dari pool yang sudah diacak
+        let item = currentGame.pool.length > 0 ? currentGame.pool.pop() : logicDB[rand(0, logicDB.length - 1)];
+        return { question: item.q, answer: item.a, options: shuffle(item.w.concat(item.a).slice(0,4)) };
+    }
+
+    function handleAnswer(btnElement, selectedVal) {
+        if (currentGame.isAnswering) return;
+        currentGame.isAnswering = true;
+        clearInterval(currentGame.interval);
+
+        const isCorrect = selectedVal === currentGame.correctAnswer;
+        
+        if (isCorrect) {
+            btnElement.classList.add('correct');
+            currentGame.score += 5; // 20 Soal * 5 Poin = 100 Max
+        } else {
+            btnElement.classList.add('wrong');
+            // Highlight jawaban benar
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                if (btn.textContent === currentGame.correctAnswer) btn.classList.add('correct');
+            });
+        }
+
+        setTimeout(() => { nextQuestion(); }, 1000);
+    }
+
+    function startTimer() {
+        clearInterval(currentGame.interval);
+        // Waktu pengerjaan dihilangkan sesuai permintaan, pemain bisa berpikir tanpa batas waktu
+    }
+
+    function renderHistoryTable() {
+        const tbody = document.getElementById('history-tbody');
+        if (userHistory.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" class="text-light" style="padding: 20px;">Belum ada permainan diselesaikan</td></tr>`;
+            return;
+        }
+        
+        tbody.innerHTML = userHistory.map((item, index) => `
+            <tr>
+                <td>${index + 1}</td>
+                <td><strong>${item.nama}</strong></td>
+                <td style="font-size: 0.8rem;">${item.level}</td>
+                <td>${item.scoreText}</td>
+            </tr>
+        `).join('');
+    }
+
+    async function finishGame() {
+        clearInterval(currentGame.interval);
+        
+        // Buka level selanjutnya secara otomatis
+        unlockedLevels[currentGame.type] = Math.max(unlockedLevels[currentGame.type], currentGame.level + 1);
+        sessionStorage.setItem('unlockedLevels', JSON.stringify(unlockedLevels));
+        
+        let stars = "⭐";
+        if (currentGame.score >= 60) stars = "⭐⭐";
+        if (currentGame.score === 100) stars = "⭐⭐⭐";
+        if (currentGame.score < 40) stars = "💔 Coba Lagi";
+
+        document.getElementById('result-score').textContent = currentGame.score;
+        document.getElementById('result-stars').textContent = stars;
+        
+        // Simpan ke Tabel History lokal
+        let gameName = currentGame.type === 'math' ? 'Berhitung' : (currentGame.type === 'english' ? 'English' : 'Logika');
+        userHistory.push({
+            nama: currentUser.nama,
+            level: `${gameName} Lv ${currentGame.level}`,
+            scoreText: `${currentGame.score} ${stars}`
+        });
+        renderHistoryTable();
+
+        showView('result-view');
+        
+        // Simpan ke backend
+        if (currentUser) {
+            fetchAPI('saveScore', {
+                userId: currentUser.id,
+                nama: currentUser.nama,
+                gameType: currentGame.type,
+                level: currentGame.level,
+                score: currentGame.score
+            });
+        }
+    }
+
+    /* ===========================
+       FETCH API (Blogger Safe)
+    =========================== */
+    async function fetchAPI(action, payload = {}) {
+        if (SHOW_DEMO_UI) {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    if (action === 'login') {
+                        if (payload.username === 'siswa' && payload.password === 'siswa123') {
+                            resolve({ success: true, message: "Login OK", data: { id: "U01", nama: "Siswa Demo", role: "Siswa" } });
+                        } else if (payload.username === 'dummy' && payload.password === 'dummy123') {
+                            resolve({ success: true, message: "Login OK", data: { id: "U02", nama: "User Dummy", role: "Siswa" } });
+                        } else {
+                            resolve({ success: false, message: "Username/Password salah (Demo)" });
+                        }
+                    } else {
+                        resolve({ success: true, message: "Aksi disimulasikan (Demo)" });
+                    }
+                }, 500);
+            });
+        }
+
+        if (isGasUrlPlaceholder()) return { success: false, message: "Konfigurasi GAS_URL belum disetel." };
+
+        try {
+            const body = JSON.stringify({ action, payload });
+            const res = await fetch(APP_CONFIG.GAS_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: body
+            });
+            const text = await res.text();
+            return JSON.parse(text);
+        } catch (error) {
+            return { success: false, message: "Gagal terhubung ke server database." };
+        }
+    }
+</script>
+</body>
+</html>
